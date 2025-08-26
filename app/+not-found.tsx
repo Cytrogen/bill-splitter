@@ -1,19 +1,22 @@
 import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">This screen does not exist.</ThemedText>
+      <Stack.Screen options={{ title: '页面未找到' }} />
+      <View style={styles.container}>
+        <Text variant="headlineMedium">Oops!</Text>
+        <Text variant="bodyLarge" style={styles.subtitle}>
+          这个页面不存在。
+        </Text>
         <Link href="/" style={styles.link}>
-          <ThemedText type="link">Go to home screen!</ThemedText>
+          <Text variant="labelLarge" style={styles.linkText}>
+            返回首页
+          </Text>
         </Link>
-      </ThemedView>
+      </View>
     </>
   );
 }
@@ -25,8 +28,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  subtitle: {
+    marginTop: 8,
+    color: '#888',
+  },
   link: {
-    marginTop: 15,
-    paddingVertical: 15,
+    marginTop: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  linkText: {
+    fontWeight: 'bold',
   },
 });
