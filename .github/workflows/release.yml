@@ -1,0 +1,45 @@
+name: Create Android Release
+
+# This workflow runs ONLY when you push a new tag starting with 'v' (e.g., v1.0.0, v1.1.0)
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build APK
+        run: eas build --platform android --profile preview --non-interactive --json > build-output.json
+
+      - name: Extract download URL
+        id: get_url
+        run: |
+          apk_url=$(jq -r '.artifacts[0].url' build-output.json)
+          echo "apk_url=$apk_url" >> $GITHUB_OUTPUT
+
+      - name: Download APK
+        run: wget -O bill-splitter-${{ github.ref_name }}.apk ${{ steps.get_url.outputs.apk_url }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: bill-splitter-${{ github.ref_name }}.apk
